@@ -2,7 +2,7 @@
 choice_add_proxy_cores() {
     while true; do
         echo
-        echo -e "  Выберите ${yellow}ядро проксирования${reset} для загрузки и установки:"
+        printf '%b\n' "  Выберите ${yellow}ядро проксирования${reset} для загрузки и установки:"
         echo
         echo "     1. Xray"
         echo "     2. Mihomo"
@@ -16,13 +16,13 @@ choice_add_proxy_cores() {
         add_mihomo=false
 
         while true; do
-            read -r -p "  Ваш выбор: " proxy_choice
+            printf '%s' "  Ваш выбор: "; read -r proxy_choice
             proxy_choice=$(echo "$proxy_choice" | sed 's/,/, /g')
 
             if echo "$proxy_choice" | grep -qE '^[0-3]$'; then
                 break
             else
-                echo -e "  ${red}Некорректный ввод.${reset} Выберите один из предложенных вариантов"
+                printf '%b\n' "  ${red}Некорректный ввод.${reset} Выберите один из предложенных вариантов"
             fi
         done
 
@@ -42,7 +42,7 @@ choice_add_proxy_cores() {
                 add_mihomo=false
                 ;;
             *)
-                echo -e "  ${red}Некорректный ввод${reset}"
+                printf '%b\n' "  ${red}Некорректный ввод${reset}"
                 valid_input=false
                 ;;
         esac
@@ -53,49 +53,49 @@ choice_add_proxy_cores() {
 
 # Смена ядра проксирования на Xray
 choice_xray_core() {  
-    command -v xray >/dev/null 2>&1 || { echo -e "  ${red}Ошибка${reset}: Ядро Xray не установлено. Выполните установку командой ${yellow}xkeen -ux${reset}"; exit 1; }
+    command -v xray >/dev/null 2>&1 || { printf '%b\n' "  ${red}Ошибка${reset}: Ядро Xray не установлено. Выполните установку командой ${yellow}xkeen -ux${reset}"; exit 1; }
     if [ -f "$initd_file" ]; then
         if grep -q 'name_client="xray"' $initd_file; then
-            echo -e " Смена ядра ${red}не выполнена${reset}. Устройство уже работает на ядре ${yellow}Xray${reset}"
+            printf '%b\n' " Смена ядра ${red}не выполнена${reset}. Устройство уже работает на ядре ${yellow}Xray${reset}"
         elif grep -q 'name_client="mihomo"' $initd_file; then
             if pidof "mihomo" >/dev/null; then
                 $initd_file stop
             fi
             sed -i 's/name_client="mihomo"/name_client="xray"/' $initd_file
             add_chmod_init
-            echo -e "  ${green}Выполнена${reset} смена ядра на ${yellow}Xray${reset}"
-            echo -e "  Настройте конфигурацию по пути '${yellow}$xray_conf_dir/${reset}'"
-            echo -e "  И запустите проксирование командой ${yellow}xkeen -start${reset}"
+            printf '%b\n' "  ${green}Выполнена${reset} смена ядра на ${yellow}Xray${reset}"
+            printf '%b\n' "  Настройте конфигурацию по пути '${yellow}$xray_conf_dir/${reset}'"
+            printf '%b\n' "  И запустите проксирование командой ${yellow}xkeen -start${reset}"
         else
-            echo -e " Произошла ${red}ошибка${reset} при смене ядра проксирования"
+            printf '%b\n' " Произошла ${red}ошибка${reset} при смене ядра проксирования"
         fi
     else
-        echo -e "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
         return 1
     fi
 }
 
 # Смена ядра проксирования на Mihomo
 choice_mihomo_core() {
-    command -v mihomo >/dev/null 2>&1 || { echo -e "  ${red}Ошибка${reset}: Ядро Mihomo не установлено. Выполните установку командой ${yellow}xkeen -um${reset}"; exit 1; }
-    command -v yq >/dev/null 2>&1 || { echo -e "  ${red}Ошибка${reset}: не установлен парсер конфигурационных файлов Mihomo - ${yellow}Yq${reset}"; exit 1; }
+    command -v mihomo >/dev/null 2>&1 || { printf '%b\n' "  ${red}Ошибка${reset}: Ядро Mihomo не установлено. Выполните установку командой ${yellow}xkeen -um${reset}"; exit 1; }
+    command -v yq >/dev/null 2>&1 || { printf '%b\n' "  ${red}Ошибка${reset}: не установлен парсер конфигурационных файлов Mihomo - ${yellow}Yq${reset}"; exit 1; }
     if [ -f "$initd_file" ]; then
         if grep -q 'name_client="mihomo"' $initd_file; then
-            echo -e " Смена ядра ${red}не выполнена${reset}. Устройство уже работает на ядре ${yellow}Mihomo${reset}"
+            printf '%b\n' " Смена ядра ${red}не выполнена${reset}. Устройство уже работает на ядре ${yellow}Mihomo${reset}"
         elif [ -f "$install_dir/mihomo" ] && [ -f "$install_dir/yq" ] && grep -q 'name_client="xray"' $initd_file; then
             if pidof "xray" >/dev/null; then
                 $initd_file stop
             fi
             sed -i 's/name_client="xray"/name_client="mihomo"/' $initd_file
             add_chmod_init
-            echo -e "  ${green}Выполнена${reset} смена ядра на ${yellow}Mihomo${reset}"
-            echo -e "  Настройте конфигурацию по пути '${yellow}$mihomo_conf_dir/${reset}'"
-            echo -e "  И запустите проксирование командой ${yellow}xkeen -start${reset}"
+            printf '%b\n' "  ${green}Выполнена${reset} смена ядра на ${yellow}Mihomo${reset}"
+            printf '%b\n' "  Настройте конфигурацию по пути '${yellow}$mihomo_conf_dir/${reset}'"
+            printf '%b\n' "  И запустите проксирование командой ${yellow}xkeen -start${reset}"
         else
-            echo -e " Произошла ${red}ошибка${reset} при смене ядра проксирования"
+            printf '%b\n' " Произошла ${red}ошибка${reset} при смене ядра проксирования"
         fi
     else
-        echo -e "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
         return 1
     fi
 }

@@ -4,20 +4,20 @@ input_concordance_list() {
     error_message="  ${yellow}Пожалуйста, выберите вариант, введя номер 0 (Нет) или 1 (Да)${reset}"
 
     echo
-    echo -e "$prompt_message"
+    printf '%b\n' "$prompt_message"
     echo "     0. Нет"
     echo "     1. Да"
 
     while true; do
         echo
-        read -r -p "  Введите номер: " user_input
+        printf '%s' "  Введите номер: "; read -r user_input
 
         case "$user_input" in
             0) return 1 ;;
             1) return 0 ;;
             *)
                 echo
-                echo -e "  $error_message"
+                printf '%b\n' "  $error_message"
                 continue
                 ;;
         esac
@@ -32,7 +32,7 @@ toggle_param() {
 
     echo
     if [ ! -f "$initd_file" ]; then
-        echo -e "  ${red}Ошибка${reset}: Не найден файл ${yellow}S05xkeen${reset}"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не найден файл ${yellow}S05xkeen${reset}"
         return 1
     fi
 
@@ -41,9 +41,9 @@ toggle_param() {
     if [ "$force_state" = "on" ] || [ "$force_state" = "off" ]; then
         if [ "$current_state" = "$force_state" ]; then
             if [ "$current_state" = "on" ]; then
-                echo -e "  Состояние ${description} уже ${green}включено${reset}"
+                printf '%b\n' "  Состояние ${description} уже ${green}включено${reset}"
             else
-                echo -e "  Состояние ${description} уже ${red}отключено${reset}"
+                printf '%b\n' "  Состояние ${description} уже ${red}отключено${reset}"
             fi
             [ "$apply" = "restart" ] && echo
             return 0
@@ -56,16 +56,16 @@ toggle_param() {
             desired_state="on"
         fi
     else
-        echo -e "  Текущее состояние ${description}:"
+        printf '%b\n' "  Текущее состояние ${description}:"
 
         if [ "$current_state" = "on" ]; then
-            echo -e "  ${green}Включено${reset}"
+            printf '%b\n' "  ${green}Включено${reset}"
             echo
             echo "     1. Отключить"
             echo "     0. Оставить без изменений"
             desired_state="off"
         else
-            echo -e "  ${red}Отключено${reset}"
+            printf '%b\n' "  ${red}Отключено${reset}"
             echo
             echo "     1. Включить"
             echo "     0. Оставить без изменений"
@@ -74,11 +74,11 @@ toggle_param() {
 
         echo
         while true; do
-            read -r -p "  Ваш выбор: " choice
+            printf '%s' "  Ваш выбор: "; read -r choice
             case "$choice" in
                 0) return 0 ;;
                 1) break ;;
-                *) echo -e "  ${red}Некорректный ввод${reset}" ;;
+                *) printf '%b\n' "  ${red}Некорректный ввод${reset}" ;;
             esac
         done
     fi
@@ -94,23 +94,23 @@ toggle_param() {
         [ "$bypass_autostart_msg" = "yes" ] && return 0
 
         if [ "$desired_state" = "on" ]; then
-            echo -e "  Новое состояние ${description} ${green}включено${reset}"
+            printf '%b\n' "  Новое состояние ${description} ${green}включено${reset}"
         else
-            echo -e "  Новое состояние ${description} ${red}отключено${reset}"
+            printf '%b\n' "  Новое состояние ${description} ${red}отключено${reset}"
         fi
 
         if [ "$restart_needed" = "reboot" ]; then
             echo
-            echo -e "  ${yellow}Перезагрузите роутер для применения изменений${reset}"
+            printf '%b\n' "  ${yellow}Перезагрузите роутер для применения изменений${reset}"
         elif [ "$restart_needed" = "restart" ] && [ "$apply" != "restart" ]; then
             echo
-            echo -e "  ${yellow}Перезапустите XKeen для применения изменений${reset}"
+            printf '%b\n' "  ${yellow}Перезапустите XKeen для применения изменений${reset}"
         fi
 
         add_chmod_init
     else
         echo
-        echo -e "  ${red}Ошибка${reset} при изменении параметра $param"
+        printf '%b\n' "  ${red}Ошибка${reset} при изменении параметра $param"
         return 1
     fi
 }
@@ -121,18 +121,18 @@ choice_menu() {
     option_no="$3"
 
     echo
-    [ -n "$title" ] && echo -e "  $title"
+    [ -n "$title" ] && printf '%b\n' "  $title"
     echo
     echo "     1. $option_yes"
     echo "     0. $option_no"
     echo
 
     while true; do
-        read -r -p "  Ваш выбор: " choice
+        printf '%s' "  Ваш выбор: "; read -r choice
         case "$choice" in
             1) return 0 ;;
             0) return 1 ;;
-            *) echo -e "  ${red}Некорректный ввод${reset}" ;;
+            *) printf '%b\n' "  ${red}Некорректный ввод${reset}" ;;
         esac
     done
 }

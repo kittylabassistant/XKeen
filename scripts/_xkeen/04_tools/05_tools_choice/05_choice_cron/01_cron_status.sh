@@ -36,7 +36,7 @@ choice_update_cron() {
     
     if [ -n "$existing_cron" ]; then
         echo
-        echo -e "  Время обновления ${yellow}геофайлов${reset} установлено на: ${green}$(format_cron_time "$existing_cron")${reset}"
+        printf '%b\n' "  Время обновления ${yellow}геофайлов${reset} установлено на: ${green}$(format_cron_time "$existing_cron")${reset}"
     fi
 
     while true; do
@@ -46,7 +46,7 @@ choice_update_cron() {
         invalid_choice=false
 
         echo
-        echo -e "  Выберите номер действия для автообновления ${yellow}GeoFile/GeoIPSET${reset}"
+        printf '%b\n' "  Выберите номер действия для автообновления ${yellow}GeoFile/GeoIPSET${reset}"
         echo
 
         [ "$info_update_geofile_cron" != "installed" ] && geofile_choice="Включить" || geofile_choice="Обновить"
@@ -57,13 +57,13 @@ choice_update_cron() {
         echo
 
         while true; do
-            read -r -p "  Ваш выбор: " update_choices
+            printf '%s' "  Ваш выбор: "; read -r update_choices
             update_choices=$(echo "$update_choices" | sed 's/,/, /g')
 
             if echo "$update_choices" | grep -qE '^[0-2]$'; then
                 break
             else
-                echo -e "  ${red}Некорректный ввод.${reset} Выберите один из предложенных вариантов"
+                printf '%b\n' "  ${red}Некорректный ввод.${reset} Выберите один из предложенных вариантов"
             fi
         done
 
@@ -72,9 +72,9 @@ choice_update_cron() {
                 1)
                     choice_geofile_cron_select=true
                     if [ "$info_update_geofile_cron" = "installed" ]; then
-                        echo -e "  ${yellow}Будет выполнено${reset} обновление задачи GeoFile/GeoIPSET"
+                        printf '%b\n' "  ${yellow}Будет выполнено${reset} обновление задачи GeoFile/GeoIPSET"
                     else
-                        echo -e "  ${yellow}Будет выполнено${reset} включение задачи GeoFile/GeoIPSET"
+                        printf '%b\n' "  ${yellow}Будет выполнено${reset} включение задачи GeoFile/GeoIPSET"
                     fi
                     ;;
                 0)
@@ -85,14 +85,14 @@ choice_update_cron() {
                 2)
                     if [ "$has_updatable_cron_tasks" = true ]; then
                         delete_cron_geofile
-                        echo -e "  Автообновление баз GeoFile/GeoIPSET ${green}выключено${reset}"
+                        printf '%b\n' "  Автообновление баз GeoFile/GeoIPSET ${green}выключено${reset}"
                     else
-                        echo -e "  ${red}Автообновление баз GeoFile/GeoIPSET не включено${reset}. Выберите другой пункт"
+                        printf '%b\n' "  ${red}Автообновление баз GeoFile/GeoIPSET не включено${reset}. Выберите другой пункт"
                         invalid_choice=true
                     fi
                     ;;
                 *)
-                    echo -e "  ${red}Некорректный ввод${reset}"
+                    printf '%b\n' "  ${red}Некорректный ввод${reset}"
                     invalid_choice=true
                     ;;
             esac

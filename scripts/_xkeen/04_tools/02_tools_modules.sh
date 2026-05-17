@@ -1,6 +1,6 @@
 show_deprecation_warning() {
-    echo -e "  ${red}Внимание!${reset} Команда устарела и удалена из XKeen"
-    echo -e "  Компонент '${yellow}Модули ядра подсистемы Netfilter${reset}' обязателен"
+    printf '%b\n' "  ${red}Внимание!${reset} Команда устарела и удалена из XKeen"
+    printf '%b\n' "  Компонент '${yellow}Модули ядра подсистемы Netfilter${reset}' обязателен"
     echo
 }
 

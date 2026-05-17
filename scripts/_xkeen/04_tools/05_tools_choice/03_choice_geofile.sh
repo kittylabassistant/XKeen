@@ -33,11 +33,11 @@ choice_geodata() {
         invalid_choice=false
 
         echo 
-        echo -e "  Выберите номер или номера действий через пробел для ${yellow}${type_name}${reset}"
+        printf '%b\n' "  Выберите номер или номера действий через пробел для ${yellow}${type_name}${reset}"
         echo 
 
-        [ "$has_missing_bases" = true ] && echo "     1. Установить отсутствующие и обновить установленные ${type_name}" || echo -e "     1. ${italic}Все доступные ${type_name} установлены${reset}"
-        [ "$has_updatable_bases" = true ] && echo "     2. Обновить установленные ${type_name}" || echo -e "     2. ${italic}Нет доступных ${type_name} для обновления${reset}"
+        [ "$has_missing_bases" = true ] && echo "     1. Установить отсутствующие и обновить установленные ${type_name}" || printf '%b\n' "     1. ${italic}Все доступные ${type_name} установлены${reset}"
+        [ "$has_updatable_bases" = true ] && echo "     2. Обновить установленные ${type_name}" || printf '%b\n' "     2. ${italic}Нет доступных ${type_name} для обновления${reset}"
 
         [ "$(eval echo \$update_refilter_${type}_msg)" = "true" ] && refilter_choice="Обновить" || refilter_choice="Установить"
         [ "$(eval echo \$update_v2fly_${type}_msg)" = "true" ] && v2fly_choice="Обновить" || v2fly_choice="Установить"
@@ -55,13 +55,13 @@ choice_geodata() {
         valid_input=true
 
         while true; do
-            read -r -p "  Ваш выбор: " data_choices
+            printf '%s' "  Ваш выбор: "; read -r data_choices
             data_choices=$(echo "$data_choices" | sed 's/,/, /g')
 
             if echo "$data_choices" | grep -qE '^[0-6 ]+$'; then
                 break
             else
-                echo -e "  ${red}Некорректный ввод.${reset} Пожалуйста, выберите снова"
+                printf '%b\n' "  ${red}Некорректный ввод.${reset} Пожалуйста, выберите снова"
             fi
         done
 
@@ -69,7 +69,7 @@ choice_geodata() {
             case "$choice" in
                 1)
                     if [ "$has_missing_bases" = "false" ]; then
-                        echo -e "  Все ${type_name} ${green}уже установлены${reset}"
+                        printf '%b\n' "  Все ${type_name} ${green}уже установлены${reset}"
                         if input_concordance_list "Вы хотите обновить их?"; then
                             eval "update_refilter_${type}=true"
                             eval "update_v2fly_${type}=true"
@@ -89,7 +89,7 @@ choice_geodata() {
                     ;;
                 2)
                     if [ "$has_updatable_bases" = "false" ]; then
-                        echo -e "  ${red}Нет установленных ${type_name}${reset} для обновления"
+                        printf '%b\n' "  ${red}Нет установленных ${type_name}${reset} для обновления"
                         if input_concordance_list "Вы хотите установить их?"; then
                             eval "install_refilter_${type}=true"
                             eval "install_v2fly_${type}=true"
@@ -114,7 +114,7 @@ choice_geodata() {
                     ;;
                 6)
                     if [ "$has_updatable_bases" = "false" ]; then
-                        echo -e "  ${red}Нет установленных ${type_name} для удаления${reset}. Выберите другой пункт"
+                        printf '%b\n' "  ${red}Нет установленных ${type_name} для удаления${reset}. Выберите другой пункт"
                         invalid_choice=true
                     else
                         eval "choice_delete_${type}_refilter_select=true"
@@ -133,7 +133,7 @@ choice_geodata() {
                     ;;
 
                 *)
-                    echo -e "  ${red}Некорректный ввод.${reset} Пожалуйста, выберите снова"
+                    printf '%b\n' "  ${red}Некорректный ввод.${reset} Пожалуйста, выберите снова"
                     invalid_choice=true
                     ;;
             esac
@@ -158,15 +158,15 @@ choice_geodata() {
         [ "$(eval echo \$choice_delete_${type}_${src3}_select)" = "true" ] && delete_list="$delete_list ${yellow}${src3_name}${reset},"
 
         if [ -n "$install_list" ]; then
-            echo -e "  Устанавливаются следующие ${type_name}: ${install_list%,}"
+            printf '%b\n' "  Устанавливаются следующие ${type_name}: ${install_list%,}"
         fi
 
         if [ -n "$update_list" ]; then
-            echo -e "  Обновляются следующие ${type_name}: ${update_list%,}"
+            printf '%b\n' "  Обновляются следующие ${type_name}: ${update_list%,}"
         fi
 
         if [ -n "$delete_list" ]; then
-            echo -e "  Удаляются следующие ${type_name}: ${delete_list%,}"
+            printf '%b\n' "  Удаляются следующие ${type_name}: ${delete_list%,}"
         fi
 
         break

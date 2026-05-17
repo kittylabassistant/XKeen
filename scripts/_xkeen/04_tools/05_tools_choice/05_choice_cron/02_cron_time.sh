@@ -3,7 +3,7 @@ choice_cron_time() {
     [ "$choice_geofile_cron_select" = true ] || return
 
     echo
-    echo -e "  Время автоматического обновления ${yellow}геофайлов${reset}:"
+    printf '%b\n' "  Время автоматического обновления ${yellow}геофайлов${reset}:"
     echo
     echo "  Выберите день"
     echo "     0. Отмена"
@@ -18,34 +18,34 @@ choice_cron_time() {
     echo
 
     while :; do
-        read -r -p "  Ваш выбор: " day_choice
+        printf '%s' "  Ваш выбор: "; read -r day_choice
         echo "$day_choice" | grep -qE '^[0-8]$' && break
-        echo -e "  ${red}Некорректный номер действия.${reset} Пожалуйста, выберите снова"
+        printf '%b\n' "  ${red}Некорректный номер действия.${reset} Пожалуйста, выберите снова"
     done
 
     [ "$day_choice" -eq 0 ] && {
-        echo -e "  Включение автоматического обновления ${yellow}геофайлов${reset} отменено."
+        printf '%b\n' "  Включение автоматического обновления ${yellow}геофайлов${reset} отменено."
         return
     }
 
     echo
 
     while :; do
-        read -r -p "  Выберите час (0-23): " hour
+        printf '%s' "  Выберите час (0-23): "; read -r hour
         case "$hour" in
             ''|*[!0-9]*) ;;
             *) [ "$hour" -ge 0 ] && [ "$hour" -le 23 ] && break ;;
         esac
-        echo -e "  ${red}Некорректный час.${reset} Пожалуйста, попробуйте снова"
+        printf '%b\n' "  ${red}Некорректный час.${reset} Пожалуйста, попробуйте снова"
     done
 
     while :; do
-        read -r -p "  Выберите минуту (0-59): " minute
+        printf '%s' "  Выберите минуту (0-59): "; read -r minute
         case "$minute" in
             ''|*[!0-9]*) ;;
             *) [ "$minute" -ge 0 ] && [ "$minute" -le 59 ] && break ;;
         esac
-        echo -e "  ${red}Некорректные минуты.${reset} Пожалуйста, попробуйте снова"
+        printf '%b\n' "  ${red}Некорректные минуты.${reset} Пожалуйста, попробуйте снова"
     done
 
     if [ "$day_choice" -eq 8 ]; then
@@ -68,7 +68,7 @@ choice_cron_time() {
     formatted_minute=$(printf "%02d" "$minute")
 
     echo
-    echo -e "  Выбранное время обновления ${yellow}геофайлов${reset}: $day_name в $formatted_hour:$formatted_minute"
+    printf '%b\n' "  Выбранное время обновления ${yellow}геофайлов${reset}: $day_name в $formatted_hour:$formatted_minute"
 
     choice_geofile_cron_time="$cron_expression"
 }

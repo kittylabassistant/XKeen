@@ -6,20 +6,20 @@ delay_autostart() {
     new_delay="$1"
 
     if [ ! -f "$initd_file" ]; then
-        echo -e "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
         return 1
     fi
 
     current_delay=$(get_current_delay "$initd_file")
 
     if [ -z "$new_delay" ]; then
-        echo -e "  Текущая задержка автозапуска XKeen ${yellow}${current_delay} секунд(ы)${reset}"
+        printf '%b\n' "  Текущая задержка автозапуска XKeen ${yellow}${current_delay} секунд(ы)${reset}"
         return 0
     fi
 
     case "$new_delay" in
         ''|*[!0-9]*)
-            echo -e "  ${red}Ошибка${reset}"
+            printf '%b\n' "  ${red}Ошибка${reset}"
             echo "  Новая задержка должна быть числом"
             return 1
         ;;
@@ -41,9 +41,9 @@ delay_autostart() {
     ' "$initd_file" > "$tmpfile" && mv "$tmpfile" "$initd_file"
 
     if [ "$(get_current_delay "$initd_file")" = "$new_delay" ]; then
-        echo -e "  Установлена задержка автозапуска XKeen ${yellow}${new_delay} секунд(ы)${reset}"
+        printf '%b\n' "  Установлена задержка автозапуска XKeen ${yellow}${new_delay} секунд(ы)${reset}"
     else
-        echo -e "  ${red}Ошибка${reset}: не удалось обновить параметр"
+        printf '%b\n' "  ${red}Ошибка${reset}: не удалось обновить параметр"
         return 1
     fi
 }

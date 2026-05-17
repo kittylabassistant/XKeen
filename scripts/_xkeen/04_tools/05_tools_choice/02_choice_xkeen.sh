@@ -1,15 +1,15 @@
 # Запрос на смену канала обновлений XKeen (Stable/Dev)
 choice_channel_xkeen() {
     echo
-    echo -e "  Текущий канал обновлений ${yellow}XKeen${reset}:"
+    printf '%b\n' "  Текущий канал обновлений ${yellow}XKeen${reset}:"
     
     if [ "$xkeen_build" = "Stable" ]; then
-        echo -e "  Стабильная версия (${green}Stable${reset})"
+        printf '%b\n' "  Стабильная версия (${green}Stable${reset})"
         echo
         echo "     1. Переключиться на канал разработки"
         echo "     0. Остаться на стабильной версии"
     else
-        echo -e "  Версия в разработке (${green}$xkeen_build${reset})"
+        printf '%b\n' "  Версия в разработке (${green}$xkeen_build${reset})"
         echo
         echo "     1. Переключиться на стабильную версию"
         echo "     0. Остаться на версии разработки"
@@ -17,7 +17,7 @@ choice_channel_xkeen() {
 
     echo
     while true; do
-        read -r -p "  Ваш выбор: " choice
+        printf '%s' "  Ваш выбор: "; read -r choice
         if echo "$choice" | grep -qE '^[0-1]$'; then
             case "$choice" in
                 1)
@@ -34,7 +34,7 @@ choice_channel_xkeen() {
                     ;;
             esac
         else
-            echo -e "  ${red}Некорректный ввод${reset}"
+            printf '%b\n' "  ${red}Некорректный ввод${reset}"
         fi
     done
 }
@@ -44,23 +44,23 @@ change_channel_xkeen() {
     if [ "$choice_build" = "Stable" ]; then
         sed -i 's/^xkeen_build="[^"]*"/xkeen_build="Stable"/' "$xkeen_var_file"
         if grep -q '^xkeen_build="Stable"$' "$xkeen_var_file"; then
-            echo -e "  Канал получения обновлений ${yellow}XKeen${reset} переключен на ${green}стабильную ветку${reset}"
+            printf '%b\n' "  Канал получения обновлений ${yellow}XKeen${reset} переключен на ${green}стабильную ветку${reset}"
         else
-            echo -e "  ${red}Возникла ошибка${reset} при переключении канала обновлений"
+            printf '%b\n' "  ${red}Возникла ошибка${reset} при переключении канала обновлений"
             unset choice_build
         fi
     elif [ "$choice_build" = "Dev" ]; then
         sed -i 's/xkeen_build="Stable"/xkeen_build="Dev"/' $xkeen_var_file
         if grep -q '^xkeen_build="Dev"$' "$xkeen_var_file"; then
-            echo -e "  Канал получения обновлений ${yellow}XKeen${reset} переключен на ${green}ветку разработки${reset}"
+            printf '%b\n' "  Канал получения обновлений ${yellow}XKeen${reset} переключен на ${green}ветку разработки${reset}"
         else
-            echo -e "  ${red}Возникла ошибка${reset} при переключении канала обновлений"
+            printf '%b\n' "  ${red}Возникла ошибка${reset} при переключении канала обновлений"
             unset choice_build
         fi
     fi
     if [ -n "$choice_build" ]; then
         echo
-        echo -e "  Командой ${green}xkeen -uk${reset} вы можете обновить ${yellow}XKeen${reset} до последней версии в выбраной ветке"
+        printf '%b\n' "  Командой ${green}xkeen -uk${reset} вы можете обновить ${yellow}XKeen${reset} до последней версии в выбраной ветке"
     fi
 }
 
@@ -75,15 +75,15 @@ change_ipv6_support() {
         desired_state="off"
     else
         echo
-        echo -e "  Текущее состояние IPv6 в ${yellow}KeeneticOS${reset}:"
+        printf '%b\n' "  Текущее состояние IPv6 в ${yellow}KeeneticOS${reset}:"
         if [ "$ip6_supported" = "true" ]; then
-            echo -e "  IPv6 ${green}включён${reset}"
+            printf '%b\n' "  IPv6 ${green}включён${reset}"
             echo
             echo "     1. Отключить IPv6"
             echo "     0. Оставить без изменений"
             desired_state="off"
         else
-            echo -e "  IPv6 ${green}отключён${reset}"
+            printf '%b\n' "  IPv6 ${green}отключён${reset}"
             echo
             echo "     1. Включить IPv6"
             echo "     0. Оставить без изменений"
@@ -92,14 +92,14 @@ change_ipv6_support() {
 
         echo
         while true; do
-            read -r -p "  Ваш выбор: " choice
+            printf '%s' "  Ваш выбор: "; read -r choice
             if echo "$choice" | grep -qE '^[0-1]$'; then
                 case "$choice" in
                     0) return 0 ;;
                     1) break ;;
                 esac
             else
-                echo -e "  ${red}Некорректный ввод${reset}"
+                printf '%b\n' "  ${red}Некорректный ввод${reset}"
             fi
         done
     fi
@@ -124,27 +124,27 @@ change_ipv6_support() {
 
         # Перезапуск прокси-клиента, если запущен
         if pidof xray >/dev/null || pidof mihomo >/dev/null; then
-            echo -e "  ${yellow}Выполняется${reset}. Пожалуйста, подождите..."
+            printf '%b\n' "  ${yellow}Выполняется${reset}. Пожалуйста, подождите..."
             "$initd_file" restart on >/dev/null 2>&1
         fi
 
         # Проверка и вывод результата
         if [ "$desired_state" = "off" ]; then
             if ! ip -6 addr show 2>/dev/null | grep -q "inet6 fe80::"; then
-                echo -e "  Поддержка IPv6 в KeeneticOS ${green}отключена${reset}"
-                echo -e "  ${red}Дополнительно убедитесь, что IPv6 отключен в веб-интерфейсе роутера${reset}"
+                printf '%b\n' "  Поддержка IPv6 в KeeneticOS ${green}отключена${reset}"
+                printf '%b\n' "  ${red}Дополнительно убедитесь, что IPv6 отключен в веб-интерфейсе роутера${reset}"
             else
-                echo -e "  ${red}Ошибка${reset} при выключении IPv6"
+                printf '%b\n' "  ${red}Ошибка${reset} при выключении IPv6"
             fi
         else
             if [ "$(sysctl -n net.ipv6.conf.all.disable_ipv6 2>/dev/null)" -eq 0 ]; then
-                echo -e "  Поддержка IPv6 в KeeneticOS ${green}включена${reset}"
+                printf '%b\n' "  Поддержка IPv6 в KeeneticOS ${green}включена${reset}"
             else
-                echo -e "  ${red}Ошибка${reset} при включении IPv6"
+                printf '%b\n' "  ${red}Ошибка${reset} при включении IPv6"
             fi
         fi
     else
-        echo -e "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не найден файл автозапуска ${yellow}S05xkeen${reset}"
         return 1
     fi
 }
@@ -164,7 +164,7 @@ choice_autostart_xkeen() {
         "Добавить ${yellow}XKeen${reset} в автозагрузку при включении роутера?" \
         "Да" \
         "Нет"; then
-        echo -e "  Автозагрузка XKeen ${green}включена${reset}"
+        printf '%b\n' "  Автозагрузка XKeen ${green}включена${reset}"
         return 0
     else
         bypass_autostart_msg="yes"
@@ -201,7 +201,7 @@ check_file_descriptors() {
     elif pid=$(pidof mihomo | awk '{print $1}') && [ -n "$pid" ]; then
         name_client="mihomo"
     else
-        echo -e "\n  Команда работает только при работающем ${yellow}XKeen${reset}"
+        printf '%b\n' "\n  Команда работает только при работающем ${yellow}XKeen${reset}"
         return 1
     fi
 
@@ -209,15 +209,15 @@ check_file_descriptors() {
 
     maxfd=$(grep 'Max open files' "/proc/$pid/limits" | awk '{print $4}')
 
-    echo -e "\n  Прокси-клиент ${light_blue}$name_client${reset} открыл файловых дескрипторов - ${green}$fd_count${reset}"
-    echo -e "  Лимит файловых дескрипторов для вашего роутера  - ${green}$maxfd${reset}"
-    echo -e "\n  При высоких значениях открытых файловых дескрипторов,"
-    echo -e "  можете включить их контроль командой ${yellow}xkeen -fd${reset}"
+    printf '%b\n' "\n  Прокси-клиент ${light_blue}$name_client${reset} открыл файловых дескрипторов - ${green}$fd_count${reset}"
+    printf '%b\n' "  Лимит файловых дескрипторов для вашего роутера  - ${green}$maxfd${reset}"
+    printf '%b\n' "\n  При высоких значениях открытых файловых дескрипторов,"
+    printf '%b\n' "  можете включить их контроль командой ${yellow}xkeen -fd${reset}"
 }
 
 warn_proxy_dns() {
     echo
-    echo -e "  ${red}Внимание!${reset} Значение данного параметра без соответствующих настроек прокси-клиента ${green}игнорируется${reset}"
+    printf '%b\n' "  ${red}Внимание!${reset} Значение данного параметра без соответствующих настроек прокси-клиента ${green}игнорируется${reset}"
 }
 
 change_proxy_dns() {

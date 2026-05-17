@@ -1,13 +1,13 @@
 # Функция для установки Xray
 install_xray() {
-    echo -e "  ${yellow}Выполняется установка${reset} Xray. Пожалуйста, подождите..."
+    printf '%b\n' "  ${yellow}Выполняется установка${reset} Xray. Пожалуйста, подождите..."
 
     # Определение переменных
     xray_archive="${xtmp_dir}/xray.zip"
 
     # Проверка наличия архива Xray
     if [ ! -f "${xray_archive}" ]; then
-        echo -e "  ${red}Ошибка${reset}: Архив Xray не найден в '${xtmp_dir}'"
+        printf '%b\n' "  ${red}Ошибка${reset}: Архив Xray не найден в '${xtmp_dir}'"
         return 1
     fi
 
@@ -21,7 +21,7 @@ install_xray() {
     fi
 
     if ! unzip -q "${xray_archive}" -d "${xtmp_dir}/xray"; then
-        echo -e "  ${red}Ошибка${reset}: Не удалось распаковать архив"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не удалось распаковать архив"
         [ -f "$install_dir/xray_bak" ] && mv "$install_dir/xray_bak" "$install_dir/xray"
         return 1
     fi
@@ -35,10 +35,10 @@ install_xray() {
     fi
 
     if [ ! -f "$bin_source" ]; then
-        echo -e "  ${red}Ошибка${reset}: Бинарный файл Xray не найден в архиве"
+        printf '%b\n' "  ${red}Ошибка${reset}: Бинарный файл Xray не найден в архиве"
         if [ -f "$install_dir/xray_bak" ]; then
             mv "$install_dir/xray_bak" "$install_dir/xray"
-            echo -e "  ${yellow}Восстановлен${reset} предыдущий бинарник Xray"
+            printf '%b\n' "  ${yellow}Восстановлен${reset} предыдущий бинарник Xray"
         fi
         rm -f "$xray_archive"
         rm -rf "${xtmp_dir}/xray"
@@ -47,7 +47,7 @@ install_xray() {
 
     mv "$bin_source" "$install_dir/xray"
     chmod +x "$install_dir/xray"
-    echo -e "  Xray ${green}успешно установлен${reset}"
+    printf '%b\n' "  Xray ${green}успешно установлен${reset}"
 
     rm -f "$xray_archive"
     rm -rf "${xtmp_dir}/xray"

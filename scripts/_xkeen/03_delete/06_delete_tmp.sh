@@ -11,30 +11,25 @@ delete_tmp() {
     [ -f "/tmp/toff" ] && rm -f "/tmp/toff"
 
     if ! pidof xray >/dev/null && ! pidof mihomo >/dev/null ; then
-        [ -f "$file_netfilter_hook" ] && rm "$file_netfilter_hook"
-        [ -f "$file_schedule_hook" ] && rm "$file_schedule_hook"
-        if command -v ipset >/dev/null 2>&1; then
-            ipset flush "$name_ipset_deny_mac" >/dev/null 2>&1
-            ipset destroy "$name_ipset_deny_mac" >/dev/null 2>&1
-        fi
+        [ -f "/opt/etc/ndm/netfilter.d/proxy.sh" ] && rm "/opt/etc/ndm/netfilter.d/proxy.sh"
     fi
 
     echo
-    echo -e "  Очистка временных файлов ${green}выполнена${reset}"
+    printf '%b\n' "  Очистка временных файлов ${green}выполнена${reset}"
 }
 
 delete_all() {
     echo
-    echo -e "  Удалить резервные копии и пользовательские настройки?"
-    echo -e "  ${yellow}$backups_dir${reset}"
-    echo -e "  ${yellow}$xkeen_cfg${reset}"
+    printf '%b\n' "  Удалить резервные копии и пользовательские настройки?"
+    printf '%b\n' "  ${yellow}$backups_dir${reset}"
+    printf '%b\n' "  ${yellow}$xkeen_cfg${reset}"
     echo
     echo "     1. Да, удалить"
     echo "     0. Нет, оставить"
     echo
 
     while true; do
-        read -r -p "  Ваш выбор: " choice
+        printf '%s' "  Ваш выбор: "; read -r choice
         case "$choice" in
             1)
                 [ -d "$backups_dir" ] && rm -rf "$backups_dir"
@@ -45,7 +40,7 @@ delete_all() {
                 return 0
                 ;;
             *)
-                echo -e "  ${red}Некорректный ввод${reset}"
+                printf '%b\n' "  ${red}Некорректный ввод${reset}"
                 ;;
         esac
     done

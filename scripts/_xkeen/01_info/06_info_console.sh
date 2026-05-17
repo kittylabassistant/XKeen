@@ -4,22 +4,22 @@ print_log_status() {
     local error_msg=$3
 
     if [ "$status_code" -eq 0 ]; then
-        echo -e "  ${green}Успешно${reset}: $success_msg"
+        printf '%b\n' "  ${green}Успешно${reset}: $success_msg"
     else
-        echo -e "  ${red}Ошибка${reset}: $error_msg"
+        printf '%b\n' "  ${red}Ошибка${reset}: $error_msg"
     fi
 }
 
 # Обратная связь в консоль
 logs_cpu_info_console() {
-    echo -e "  Набор инструкций процессора: ${yellow}$architecture${reset}"
+    printf '%b\n' "  Набор инструкций процессора: ${yellow}$architecture${reset}"
     
     case "$architecture" in
         arm64-v8a|mips32le|mips32)
-            echo -e "  Процессор ${green}поддерживается${reset} XKeen"
+            printf '%b\n' "  Процессор ${green}поддерживается${reset} XKeen"
             ;;
         *)
-            echo -e "  Процессор ${red}не поддерживается${reset} XKeen"
+            printf '%b\n' "  Процессор ${red}не поддерживается${reset} XKeen"
             ;;
     esac
 }
@@ -32,17 +32,17 @@ logs_delete_configs_info_console() {
     fi
 
     if [ -z "$deleted_files" ]; then
-        echo -e "  ${green}Успешно${reset}: Все конфигурационные файлы Xray удалены"
+        printf '%b\n' "  ${green}Успешно${reset}: Все конфигурационные файлы Xray удалены"
     else
-        echo -e "  ${red}Ошибка${reset}: Не удалены следующие конфигурационные файлы:"
+        printf '%b\n' "  ${red}Ошибка${reset}: Не удалены следующие конфигурационные файлы:"
         for file in $deleted_files; do
-            echo -e "    $file"
+            printf '%b\n' "    $file"
         done
     fi
 }
 
 logs_delete_geosite_info_console() {
-    echo -e "  ${yellow}Проверка${reset} выполнения операции"
+    printf '%b\n' "  ${yellow}Проверка${reset} выполнения операции"
     # antifilter переименован в refilter в install/delete, имя verification отстало
     for file in "geosite_refilter.dat" "geosite_v2fly.dat" "geosite_zkeen.dat"; do
         [ ! -f "$geo_dir/$file" ]
@@ -51,7 +51,7 @@ logs_delete_geosite_info_console() {
 }
 
 logs_delete_geoip_info_console() {
-    echo -e "  ${yellow}Проверка${reset} выполнения операции"
+    printf '%b\n' "  ${yellow}Проверка${reset} выполнения операции"
     for file in "geoip_refilter.dat" "geoip_v2fly.dat" "geoip_zkeenip.dat"; do
         [ ! -f "$geo_dir/$file" ]
         print_log_status $? "Файл $file отсутствует в директории '$geo_dir'" "Файл $file не удален"
@@ -59,7 +59,7 @@ logs_delete_geoip_info_console() {
 }
 
 logs_delete_geoipset_info_console() {
-    echo -e "  ${yellow}Проверка${reset} выполнения операции"
+    printf '%b\n' "  ${yellow}Проверка${reset} выполнения операции"
     
     [ ! -f "$ru_exclude_ipv4" ]
     print_log_status $? "Файл ru_exclude_ipv4.lst отсутствует в директории '$ipset_cfg'" "Файл ru_exclude_ipv4.lst не удален"

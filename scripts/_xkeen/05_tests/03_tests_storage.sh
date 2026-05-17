@@ -16,17 +16,17 @@ location_entware_storage() {
 preinstall_warn() {
     if [ -n "$preinstall_warn" ]; then
         echo
-        echo -e "  ${red}Внимание${reset}: Инициирована установка XKeen $entware_storage"
+        printf '%b\n' "  ${red}Внимание${reset}: Инициирована установка XKeen $entware_storage"
         echo "  Убедитесь, что на ней достаточно свободного места. Сбой при такой"
         echo "  установке не является проблемой XKeen и багрепорт не будет рассмотрен"
-        echo -e "  XKeen ${green}рекомендуется${reset} устанавливать на внешний ${green}USB-накопитель${reset}"
+        printf '%b\n' "  XKeen ${green}рекомендуется${reset} устанавливать на внешний ${green}USB-накопитель${reset}"
         echo
         echo "  1. Продолжить установку $entware_storage"
         echo "  2. Выйти из установщика"
         echo
 
     while true; do
-        read -p "  Выберите действие: " choice
+        printf '%s' "  Выберите действие: "; read -r choice
 
         case $choice in
             1)
@@ -35,11 +35,11 @@ preinstall_warn() {
                 ;;
             2)
                 echo
-                echo -e "  ${red}Установка отменена${reset}"
+                printf '%b\n' "  ${red}Установка отменена${reset}"
                 exit 0
                 ;;
             *)
-                echo -e "  ${red}Некорректный ввод.${reset} Выберите один из предложенных вариантов"
+                printf '%b\n' "  ${red}Некорректный ввод.${reset} Выберите один из предложенных вариантов"
                 ;;
         esac
     done
