@@ -47,40 +47,29 @@ get_release_var_file() {
     return 1
 }
 
-download_xkeen_release() {
-    if curl -fLo "$archive_name" --connect-timeout 10 -m 15 "$url"; then
-        return 0
-    fi
-
-    if curl -fLo "$archive_name" --connect-timeout 10 -m 15 "https://gh-proxy.com/$url"; then
-        return 0
-    fi
-
-    if curl -fLo "$archive_name" --connect-timeout 10 -m 15 "https://ghfast.top/$url"; then
-        return 0
-    fi
-
-    printf "  ${red}Ошибка${reset}: не удалось загрузить ${yellow}xkeen.tar.gz${reset}\n"
+fetch_via_proxies() {
+    _url="$1"
+    _out="$2"
+    # Direct → gh_proxy1 (gh-proxy.com) → gh_proxy2 (ghfast.top)
+    curl -fLo "$_out" --connect-timeout 10 -m 15 "$_url" 2>/dev/null && return 0
+    curl -fLo "$_out" --connect-timeout 10 -m 15 "https://gh-proxy.com/$_url" 2>/dev/null && return 0
+    curl -fLo "$_out" --connect-timeout 10 -m 15 "https://ghfast.top/$_url" 2>/dev/null && return 0
     return 1
+}
+
+download_xkeen_release() {
+    if ! fetch_via_proxies "$url" "$archive_name"; then
+        printf "  ${red}Ошибка${reset}: не удалось загрузить ${yellow}xkeen.tar.gz${reset}\n"
+        return 1
+    fi
 }
 
 download_release_fix() {
     target_file="$1"
-
-    if curl -fLo "$target_file" --connect-timeout 10 -m 15 "$release_fix_url"; then
-        return 0
+    if ! fetch_via_proxies "$release_fix_url" "$target_file"; then
+        printf "  ${red}Ошибка${reset}: не удалось применить исправление ${yellow}01_info_variable.sh${reset} для релиза ${green}1.1.3.9${reset}\n"
+        return 1
     fi
-
-    if curl -fLo "$target_file" --connect-timeout 10 -m 15 "https://gh-proxy.com/$release_fix_url"; then
-        return 0
-    fi
-
-    if curl -fLo "$target_file" --connect-timeout 10 -m 15 "https://ghfast.top/$release_fix_url"; then
-        return 0
-    fi
-
-    printf "  ${red}Ошибка${reset}: не удалось применить исправление ${yellow}01_info_variable.sh${reset} для релиза ${green}1.1.3.9${reset}\n"
-    return 1
 }
 
 apply_release_1139_yq_fix() {
