@@ -1,9 +1,9 @@
-name: Create Test build to `main/test/` folder
+name: Create Test build to `beta/test/` folder
 
 on:
   push:
     branches:
-      - main
+      - beta
     paths:
       - 'scripts/**'
   workflow_dispatch:

@@ -139,3 +139,31 @@ cd scripts && find . -type f -o -type l | sed 's|^\./||' | tar -czf /tmp/xkeen.t
 ```
 
 Результат идентичен тому, что генерирует `package-folder.yaml` (за исключением подменённого `build_timestamp` и номера сборки). На локальной сборке из исходников (`build_timestamp` пуст) `xkeen -v` показывает `XKeen 2.0.1 Beta` — без номера сборки и даты.
+
+## Форк: ветка `beta`
+
+В форке тестовая сборка собирается из ветки `beta`, а `main` форка повторяет `upstream/main`. Этот раздел,
+триггеры на `beta` в `package-folder.yaml` и `spec-tests.yaml` и имя workflow в upstream не отправляются.
+
+Подтянуть upstream в `beta`:
+
+```sh
+git fetch upstream
+git switch beta
+git merge --no-ff --no-edit upstream/main
+# только если merge остановился на конфликте по архиву: оставить свой, CI соберёт новый
+git checkout --ours test/xkeen.tar.gz && git add test/xkeen.tar.gz && git commit --no-edit
+git push origin beta
+```
+
+- Если `git push` отклонён, потому что бот успел закоммитить сборку, выполнить `git pull --no-rebase origin beta`.
+  С rebase git переиграет коммиты upstream, включая его сборки архива.
+- `main` форка: `git push --force-with-lease origin upstream/main:main`.
+- Фильтр `paths` смотрит только первые 300 файлов push-а. Если большой мерж не запустил сборку:
+  `gh workflow run package-folder.yaml --ref beta`.
+- Без секрета `GPG_PRIVATE_KEY` сборка падает на шаге `Import GPG key`. С секретом заработает и вариант
+  workflow из upstream на `main` форка: бот начнёт коммитить туда, и `main` разойдётся с `upstream/main`.
+- PR в upstream: ветка от `upstream/main` и `git cherry-pick` коммитов фичи — без этого раздела, коммитов
+  бота и мержей.
+- Когда фича попадёт в upstream, `beta` пересоздать от `upstream/main`: иначе файлы `test/changelogs/`
+  с одинаковыми именами из обеих веток будут конфликтовать при мерже.
